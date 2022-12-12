@@ -12,50 +12,58 @@ public class Solver implements SudokuSolver{
 
     @Override
     public boolean legal(int digit, int row, int col) {
-        boolean isLegal = false;
-        boolean checkRow = true;
-        boolean checkCol = true;
-        if(row == 9 && col == 9){
-            return isLegal;
+        if(row == 8 && col == 9){
+            return true;
         }
 
-        if(board[row][col] == 0){
-            for(int i = 1; i <= 9; i++){
-                for(int tempRow = 0; tempRow < 9; tempRow++) {
-                    if(board[tempRow][col] == digit){
-                        checkRow = false;  
-                        break;
-                    } 
-                }
+        if(col == 9) {
+            row++;
+            col = 0;
+        }
 
-                for(int tempCol = 0; tempCol < 9; tempCol++){
-                    if(board[row][tempCol] == digit){
-                        checkCol = false;
-                        break;
-                    } 
-                }
-                int strow = row-(row%3);
-                int stcol = col-(col%3);
+        if(board[row][col] != 0){
+            legal(digit, row, col + 1);
+        }
+
+        for(digit = 1; digit <= 9; digit++){
             
-                for(int x=strow; x<strow+3; x++) {
-                    for(int y=stcol; y<stcol+3; y++) {
-                        if(board[x][y]==i) {
-                            return false;
-                        }
-                    }
-                }
+            if(isOK(digit, row, col)){
+                set(row, col, digit);
+        
+                if(legal(digit, row, col + 1)) return true;
+    
             }
-
+            
+            board[row][col] = 0;
         }
 
         return false;
     }
 
-    public boolean checkSquare(int startRow, int startCol){
+    public boolean isOK(int num, int row, int col){
+        for(int tempRow = 0; tempRow < 9; tempRow++) {
+            if(board[tempRow][col] == num){
+                return false;
+            } 
+        }
 
-        return false; 
-    }
+        for(int tempCol = 0; tempCol < 9; tempCol++){
+            if(board[row][tempCol] == num){
+                return false;
+            } 
+        }
+        int strow = row-(row%3);
+        int stcol = col-(col%3);
     
+        for(int x=strow; x<strow+3; x++) {
+            for(int y=stcol; y<stcol+3; y++) {
+                if(board[x][y]==num) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
     @Override
     public void set(int row, int col, int digit) {
