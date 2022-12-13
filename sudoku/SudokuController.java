@@ -9,6 +9,9 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -23,6 +26,7 @@ public class SudokuController extends JFrame {
 	private JTextField[][] field;
 	private Border fieldBorder;
 	private Font font;
+    private int counter = 0;
 	
 	public static void main(String[] args) {
 		 new SudokuController();
@@ -35,6 +39,17 @@ public class SudokuController extends JFrame {
 		  	font = new Font("Verdana", Font.CENTER_BASELINE, 20);
 		  	JButton solve = new JButton("Solve");
 		  	JButton clear = new JButton("Clear");
+            JButton controlButton = new JButton("Control check");
+            JButton newSud = new JButton("New Board");
+
+            newSud.addActionListener(e -> {
+                clearAll(getContentPane());
+                newBoard();
+            });
+
+            controlButton.addActionListener(e -> {
+                controlSolution();
+            });
 	       
 		  	clear.addActionListener(e -> {
 	    	   clearAll(getContentPane());
@@ -76,6 +91,8 @@ public class SudokuController extends JFrame {
 	        JPanel Buttons = new JPanel(new GridLayout(9,1));
 	        Buttons.add(solve,  BorderLayout.SOUTH);
 	        Buttons.add(clear, BorderLayout.SOUTH);
+            Buttons.add(controlButton, BorderLayout.SOUTH);
+            Buttons.add(newSud, BorderLayout.SOUTH);
 
 	       add(p2);
 	       add(Buttons);
@@ -87,6 +104,78 @@ public class SudokuController extends JFrame {
 	       setLocationByPlatform(true);
 	       setVisible(true);
 	  }
+
+      private void newBoard(){
+        if(counter == 0){
+
+            Scanner scanner = null;
+            SudokuSolv solver = new SudokuSolv();
+            try{
+                //byt path
+                 scanner = new Scanner(new File("C:/Users/davpe/Documents/skolarbete/SudokuUppgift22/sudoku/sudokufile.txt"));
+            } catch(FileNotFoundException e) {
+                System.out.println("Couldn't open bitch");
+                System.exit(1);
+            } 
+    
+            
+            String line = scanner.nextLine();
+            
+            solver.setMatrix(helper(line));
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 9; j++) {
+                    field[i][j].setText(String.valueOf(solver.getNumber(i,j)));
+                }
+            }
+            if(scanner.hasNextLine()) line = scanner.nextLine();
+            
+          counter++;
+          }
+        }
+
+
+      private int[][] helper(String line){
+        int[][] temp = new int[9][9];
+        int row = 0;
+        int col = 0;
+        for(String str: line.split(" ")) {
+
+            if(col == 9){
+                row++;
+                col = 0;
+            }
+            if(row == 9) break;
+            int nbr = Integer.parseInt(str);
+            if(nbr == 0){
+                field[row][col].setText(" ");;
+                
+            } else {
+                temp[row][col] = nbr;
+            }
+            col++;
+        }
+        return temp;
+      }
+
+      private void controlSolution(){
+        int[][] temp = new int[9][9];
+        SudokuSolv solver = new SudokuSolv();
+
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if(field[i][j].getText().isEmpty()) {
+                    temp[i][j] = 0;
+                }else  temp[i][j] = Integer.parseInt(field[i][j].getText());
+            }
+        }
+
+        solver.setMatrix(temp);
+        if(solver.solve()){
+            JOptionPane.showMessageDialog(getContentPane(), "Looks good!"); 
+        } else {
+            JOptionPane.showMessageDialog(getContentPane(), "Suck my massive solution balls"); 
+        }
+      }
 	  
 	  private void clearAll(Container myContainer) {
 
