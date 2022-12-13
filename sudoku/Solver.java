@@ -67,6 +67,7 @@ public class Solver implements SudokuSolver{
 
     @Override
     public void set(int row, int col, int digit) {
+        if(row > 8 || row < 0 || col > 8 || col < 0) throw  new IllegalArgumentException();
         board[row][col] = digit;
     }
 
@@ -86,7 +87,11 @@ public class Solver implements SudokuSolver{
 
     @Override
     public void setMatrix(int[][] matrix) {
-        board = matrix;
+        if(matrix.length > 9) throw new IllegalArgumentException();
+		if(matrix[0].length > 9) throw new IllegalArgumentException();
+		for(int i=0; i<9; i++)
+			  for(int j=0; j<9; j++)
+				  board[i][j]=matrix[i][j];
     }
 
     @Override
