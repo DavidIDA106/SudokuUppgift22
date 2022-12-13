@@ -27,6 +27,9 @@ public class SudokuController extends JFrame {
 	private Border fieldBorder;
 	private Font font;
     private int counter = 0;
+    private Scanner scanner;
+        
+        
 	
 	public static void main(String[] args) {
 		 new SudokuController();
@@ -106,31 +109,28 @@ public class SudokuController extends JFrame {
 	  }
 
       private void newBoard(){
-        if(counter == 0){
-
-            Scanner scanner = null;
-            SudokuSolv solver = new SudokuSolv();
-            try{
-                //byt path
-                 scanner = new Scanner(new File("C:/Users/davpe/Documents/skolarbete/SudokuUppgift22/sudoku/sudokufile.txt"));
-            } catch(FileNotFoundException e) {
-                System.out.println("Couldn't open bitch");
-                System.exit(1);
-            } 
-    
-            
-            String line = scanner.nextLine();
-            
-            solver.setMatrix(helper(line));
-            for (int i = 0; i < 9; i++) {
-                for (int j = 0; j < 9; j++) {
-                    field[i][j].setText(String.valueOf(solver.getNumber(i,j)));
-                }
+       if(counter == 0){
+           try{
+               //byt path
+                scanner = new Scanner(new File("C:/Users/davpe/Documents/skolarbete/SudokuUppgift22/sudoku/sudokufile.txt"));
+           } catch(FileNotFoundException e) {
+               System.out.println("Couldn't open bitch");
+               System.exit(1);
+           } 
+       }
+        SudokuSolv solver = new SudokuSolv();
+        String line = scanner.nextLine();
+        
+        solver.setMatrix(helper(line));
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                field[i][j].setText(String.valueOf(solver.getNumber(i,j)));
             }
-            if(scanner.hasNextLine()) line = scanner.nextLine();
-            
+        }
+        
           counter++;
-          }
+
+          if(!scanner.hasNextLine()) counter = 0;
         }
 
 
